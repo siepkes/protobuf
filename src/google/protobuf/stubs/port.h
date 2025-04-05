@@ -65,6 +65,7 @@
 #include <sys/endian.h>  // __BYTE_ORDER
 #elif (defined(sun) || defined(__sun)) && (defined(__SVR4) || defined(__svr4__))
 #include <sys/isa_defs.h>  // __BYTE_ORDER
+#include <sys/byteorder.h>
 #elif defined(_AIX) || defined(__TOS_AIX__)
 #include <sys/machine.h>  // BYTE_ORDER
 #elif defined(__QNX__)
@@ -88,6 +89,8 @@
 #include <libkern/OSByteOrder.h>
 #elif defined(__linux__) || defined(__ANDROID__) || defined(__CYGWIN__)
 #include <byteswap.h>  // IWYU pragma: export
+#elif defined(__sun) || defined(__illumos__)
+#include <sys/byteorder.h>
 #endif
 
 // Legacy: some users reference these (internal-only) macros even though we
@@ -194,6 +197,11 @@ inline void GOOGLE_UNALIGNED_STORE64(void *p, uint64_t v) {
 #define bswap_16(x) OSSwapInt16(x)
 #define bswap_32(x) OSSwapInt32(x)
 #define bswap_64(x) OSSwapInt64(x)
+
+#elif defined(__sun) || defined(__illumos__)
+#define bswap_16(x) BSWAP_16(x)
+#define bswap_32(x) BSWAP_32(x)
+#define bswap_64(x) BSWAP_64(x)
 
 #elif !defined(__linux__) && !defined(__ANDROID__) && !defined(__CYGWIN__)
 
