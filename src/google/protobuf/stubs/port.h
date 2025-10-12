@@ -27,6 +27,8 @@
 #include <intrin.h>
 #elif defined(__APPLE__)
 #include <libkern/OSByteOrder.h>
+#elif defined(__sun) || defined(__illumos__)
+#include <sys/byteorder.h>
 #elif defined(__linux__) || defined(__ANDROID__) || defined(__CYGWIN__)
 #include <byteswap.h>  // IWYU pragma: export
 #endif
@@ -136,7 +138,12 @@ inline void GOOGLE_UNALIGNED_STORE64(void *p, uint64_t v) {
 #define bswap_32(x) OSSwapInt32(x)
 #define bswap_64(x) OSSwapInt64(x)
 
-#elif !defined(__linux__) && !defined(__ANDROID__) && !defined(__CYGWIN__)
+#elif defined(__sun) || defined(__illumos__)
+#define bswap_16(x) BSWAP_16(x)
+#define bswap_32(x) BSWAP_32(x)
+#define bswap_64(x) BSWAP_64(x)
+
+#elif !defined(__sun) && !defined(__illumos__) && !defined(__linux__) && !defined(__ANDROID__) && !defined(__CYGWIN__)
 
 #ifndef bswap_16
 static inline uint16_t bswap_16(uint16_t x) {
